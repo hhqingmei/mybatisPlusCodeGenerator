@@ -1,0 +1,70 @@
+package ${package.ServiceImpl};
+
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import ${superServiceImplClassPackage};
+import org.springframework.stereotype.Service;
+import com.example.demo.utils.BusinessException;
+import java.util.List;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * @auther ${author}
+ * @create ${date}
+ * @describe $!{table.comment}服务实现类
+ */
+@Service
+@Transactional(rollbackFor = Exception.class)
+#if(${kotlin})
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>(), ${table.serviceName} {
+
+        }
+#else
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}> implements ${table.serviceName} {
+
+    @Override
+    public Page<${entity}> get${entity}PageList(${entity} ${table.entityPath}) {
+         Page<${entity}> ${table.entityPath}Page = this.page(new Page<>(), Wrappers.<${entity}>lambdaQuery()
+         .eq(${entity}::getEnabled, true));
+
+         return ${table.entityPath}Page;
+    }
+
+     @Override
+     public String create${entity}(${entity} ${table.entityPath}) {
+         boolean success = this.save(${table.entityPath});
+         if (!success) {
+             throw new BusinessException("新增失败!");
+         }
+         return "新增成功!";
+     }
+
+     @Override
+     public String update${entity}(${entity} ${table.entityPath}) {
+         ${entity} record = this.getById(${table.entityPath}.getId());
+         if (record == null) {
+            return "数据库查询不到对应记录,修改失败";
+         }
+         boolean update = this.updateById(${table.entityPath});
+         if (!update) {
+             throw new BusinessException("修改失败!");
+         }
+         return "修改成功!";
+     }
+
+     @Override
+     public void batchDelete${entity}(List<String> ids) {
+         if (0 == ids.size()) {
+             throw new BusinessException("${entity}Id不能为空");
+         }
+         int deleteNum = baseMapper.deleteBatchIds(ids);
+         if (deleteNum != ids.size()) {
+             throw new BusinessException("删除失败");
+         }
+     }
+
+}
+#end
