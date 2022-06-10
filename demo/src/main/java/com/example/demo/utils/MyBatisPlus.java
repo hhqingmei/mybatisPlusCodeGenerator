@@ -29,7 +29,7 @@ public class MyBatisPlus {
                         // 开启swagger模式
                         .enableSwagger()
                         // 输出位置
-                        .outputDir("D:\\workspace\\demo\\src\\main\\java"))
+                        .outputDir("D:\\workspace\\mybatisPlusCodeGenerator\\demo\\src\\main\\java"))
                 // 包配置
                 .packageConfig((scanner, builder) -> builder.parent(scanner.apply("请输入包名？"))
                         .service("service")
